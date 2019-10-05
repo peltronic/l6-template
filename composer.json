@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "PSG L6-Template",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "PSG L6-Template",
     "keywords": [
         "framework",
         "laravel"
@@ -15,6 +15,8 @@
         "laravel/framework": "^6.0"
     },
     "require-dev": {
+        "beyondcode/laravel-dump-server": "^1.0",
+        "filp/whoops": "^2.0",
         "barryvdh/laravel-debugbar": "^3.1",
         "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.4",
@@ -58,6 +60,16 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "post-update-cmd": [
+            "@refresh-db"
+        ],
+        "refresh-db": [
+            "touch database/database.sqlite",
+            "@php artisan migrate:fresh --env=testing",
+            "@php artisan db:seed"
+        ],
+        "my-clear-cache": "@php artisan cache:clear",
+        "test": "phpunit; echo"
     }
 }
