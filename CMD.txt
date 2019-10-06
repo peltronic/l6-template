@@ -1,0 +1,23 @@
+$ php artisan key:generate
+
+$ php artisan migrate:fresh --env=testing
+
+
+$ php artisan session:table
+$ php artisan migrate
+$ git status -u
+$ git add .
+$ git commit -m "INIT"
+
+php artisan make:scaffold Clientprofile --schema=" \
+guid:string:unique,\
+slug:string:unique,\
+cname:string:index,\
+streetaddr:text:nullable,\
+city:string:nullable,\
+state:string:nullable,\
+zip:string:nullable,\
+email:string:nullable,\
+description:longtext:nullable,\
+jsonattrs:longtext:nullable, \
+subscriber_count:integer:unsigned:default(0)"
