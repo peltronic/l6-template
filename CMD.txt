@@ -9,15 +9,19 @@ $ git status -u
 $ git add .
 $ git commit -m "INIT"
 
-php artisan make:scaffold Clientprofile --schema=" \
+php artisan make:scaffold Account --schema=" \
 guid:string:unique,\
 slug:string:unique,\
-cname:string:index,\
-streetaddr:text:nullable,\
-city:string:nullable,\
-state:string:nullable,\
-zip:string:nullable,\
-email:string:nullable,\
-description:longtext:nullable,\
-jsonattrs:longtext:nullable, \
-subscriber_count:integer:unsigned:default(0)"
+user_id:integer:unsigned:nullable,\
+aname:string:nullable,\
+adesc:longtext:nullable,\
+jsonattrs:longtext:nullable"
+
+php artisan make:scaffold Listing --schema=" \
+guid:string:unique,\
+slug:string:unique,\
+account_id:integer:unsigned:nullable,\
+ltitle:string:nullable,\
+ldesc:longtext:nullable,\
+jsonattrs:longtext:nullable"
+

@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('listings', 'ListingsController', ['only' => ['index', 'show', 'create', 'store', 'update', 'edit', 'destroy']]);
+Route::resource('accounts', 'AccountsController', ['only' => ['index', 'show', 'create', 'store', 'update', 'edit', 'destroy']]);
