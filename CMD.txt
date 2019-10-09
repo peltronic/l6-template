@@ -32,3 +32,5 @@ $ php artisan migrate:refresh --seed
 
 $ ltest
 $ sqlite3 database/templatedb.sqlite
+
+$ php artisan make:resource Account

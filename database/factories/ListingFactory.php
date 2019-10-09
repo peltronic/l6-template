@@ -4,6 +4,7 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Models\Listing::class, function (Faker $faker) {
     return [
-        'ltitle' => $faker->name,
+        'ltitle' => $faker->catchPhrase,
+        'ldesc' => $faker->sentence,
     ];
 });
