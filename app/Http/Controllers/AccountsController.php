@@ -8,6 +8,7 @@ use App\Http\Requests\AccountRequest; // %PSG ???
 
 use App\Models\Account;
 use App\Http\Resources\Account as AccountResource;
+use App\Http\Resources\AccountCollection;
 
 class AccountsController extends Controller
 {
@@ -20,7 +21,8 @@ class AccountsController extends Controller
     {
         $accounts = Account::paginate();
         if ( $request->ajax() ) {
-            return AccountResource::collection($accounts);
+            //return AccountResource::collection($accounts);
+            return new AccountCollection($accounts);
         } else {
             return view('accounts.index', compact('accounts'));
         }

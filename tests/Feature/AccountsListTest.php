@@ -26,6 +26,9 @@ class AccountsListTest extends TestCase
         //$response = $this->actingAs($user,'web')->ajaxJSON('POST',$url,$payload);
         $response = $this->ajaxJSON('GET','/api/accounts',[]);
 
+$content = json_decode($response->content());
+//dd($content);
+
         //dd($response->getContent());
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -43,7 +46,6 @@ class AccountsListTest extends TestCase
                     ],
                 ],
             ],
-            /*
             'links' => [
                 'first',
                 'last',
@@ -59,7 +61,6 @@ class AccountsListTest extends TestCase
                 'to',
                 'total',
             ],
-             */
         ]);
     }
 

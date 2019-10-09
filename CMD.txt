@@ -34,3 +34,5 @@ $ ltest
 $ sqlite3 database/templatedb.sqlite
 
 $ php artisan make:resource Account
+-- $ php artisan make:resource Account --collection
+$ php artisan make:resource AccountCollection
