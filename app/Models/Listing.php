@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class Listing extends Model
+class Listing extends BaseModel implements Selectable, Sluggable, Guidable
 {
     protected $guarded = ['id','guid','slug','created_at','updated_at'];
 
@@ -13,11 +13,9 @@ class Listing extends Model
     // Relations
     //--------------------------------------------
 
-    /*
-    public function users() {
-        return $this->hasMany('App\Models\User');
+    public function account() {
+        return $this->belongsTo('App\Models\Account');
     }
-     */
 
     //--------------------------------------------
     // Accessors/Mutators
@@ -51,7 +49,7 @@ class Listing extends Model
             $options[''] = '';
         }
         foreach ($records as $i => $r) {
-            $options[$r->{$keyField}] = $r->cname;
+            $options[$r->{$keyField}] = $r->ltitle;
         }
         return $options;
     }

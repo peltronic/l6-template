@@ -9,7 +9,7 @@ class CreateAccountsTable extends Migration
 	{
 		Schema::create('accounts', function(Blueprint $table) {
             $table->increments('id');
-            $table->string(' guid')->unique();
+            $table->string('guid')->unique();
             $table->string('slug')->unique();
             $table->integer('user_id')->unsigned()->nullable();
             $table->string('aname')->nullable();
