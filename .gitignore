@@ -15,3 +15,4 @@ yarn-error.log
 *.swp
 .swp
 *.vim
+/*.txt
