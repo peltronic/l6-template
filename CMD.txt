@@ -38,6 +38,6 @@ $ php artisan make:resource Account
 $ php artisan make:resource AccountCollection
 
 $ ltest
-$ ltest  --filter testNameFilter tests/Feature/AccountsListTest.php
+$ vendor/bin/phpunit --testdox --filter testAnameFilter tests/Feature/AccountsListTest.php
 $ vendor/bin/phpunit --testdox 
 $ vendor/bin/phpunit --testdox --filter testNameFilter tests/Feature/AccountsListTest.php

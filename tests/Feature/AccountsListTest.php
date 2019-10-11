@@ -82,18 +82,18 @@ class AccountsListTest extends TestCase
         $this->assertResponseContainsAccounts($response, ...$accounts);
     }
 
-    // %TODO: impl filtering using Query Scopes
-    public function testNameFilter()
+    public function testAnameFilter()
     {
         $account1 = factory(Account::class)->create(['aname' => 'PHP for beginners']);
         $account2 = factory(Account::class)->create(['aname' => 'Javascript for dummies']);
         $account3 = factory(Account::class)->create(['aname' => 'Advanced Python']);
-
         $querystr = 'for';
-        $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>$querystr]]); // %FIXME: should fail
+
+        $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>$querystr]]);
         $response->assertStatus(200);
-        $content = json_decode($response->content(),true);
-        //dd($content['data']);
+
+        $content = json_decode($response->content(),true); //dd($content['data']);
+
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
@@ -103,21 +103,46 @@ class AccountsListTest extends TestCase
         ]);
 
         foreach ( $content['data'] as $i => $d ) {
-            $this->assertRegExp('/'.$querystr.'/', $d['aname']); // contains string
+            $this->assertRegExp('/'.$querystr.'/', $d['aname']); // test that each result contains query string
         }
 
-        /*
-        $account1->aname = 'blah';
-        $account2->aname = 'blah';
-         */
+        // force fail
+        if (0) {
+            $account1->aname = 'blah';
+            $account2->aname = 'blah';
+        }
 
         $a = $content['data'];
         $s = [$this->accountToResourceArray($account1)];
-        //dd( $a );
-        //dd( $s );
-        //$this->assertArraySubset( $s, $a );
-        self::assertArraySubset( $s, $a );
+        self::assertArraySubset( $s, $a ); //dd( $a, $s );
 
+    }
+
+    public function testAnameSort()
+    {
+        $account1 = factory(Account::class)->create(['aname' => 'PHP for begginers']);
+        $account2 = factory(Account::class)->create(['aname' => 'Javascript for dummies']);
+        $account3 = factory(Account::class)->create(['aname' => 'Advanced Python']);
+
+        // ---
+
+        $response = $this->ajaxJSON('GET','/api/accounts?sort_on=aname');
+        $response->assertStatus(200);
+
+        $content = json_decode($response->content(),true); //dd($content)
+        //dd($content);
+
+        $this->assertResponseContainsAccounts($response, $account3, $account2, $account1);
+
+        // ---
+
+        $response = $this->ajaxJSON('GET','/api/accounts?sort_on=aname&is_sort_asc=0');
+        $response->assertStatus(200);
+
+        $content = json_decode($response->content(),true); //dd($content)
+        //dd($content);
+
+        $this->assertResponseContainsAccounts($response, $account1, $account2, $account3);
     }
 
     // ---------------------------------------------

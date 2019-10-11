@@ -19,15 +19,36 @@ class AccountsController extends Controller
 
     public function index(Request $request)
     {
+        $query = Account::query();
+
         if ( $request->has('filters') ) {
-            $accounts = Account::filterBy($request->filters)->paginate();
-        } else {
-            $accounts = Account::paginate();
+            $query->filterBy($request->filters);
         }
+
+        if ( $request->has('sort_on') ) {
+            $sort_on = $request->sort_on;
+            $sort_direction = $request->has('is_sort_asc') 
+                ? ($request->is_sort_asc ? 'asc' : 'desc')
+                : 'asc'; // default is asc
+            $query->orderBy($sort_on, $sort_direction);
+        }
+
+        $accounts = $query->paginate();
+        //$accounts = $query->get();
+
+
+//$accounts = Account::filterBy($request->filters)->paginate();
 
         if ( $request->ajax() ) {
             //return AccountResource::collection($accounts);
-            return new AccountCollection($accounts);
+            //return new AccountCollection($accounts);
+            return (new AccountCollection($accounts))->additional([
+                'meta' => [ 
+                    'sort_on' => $sort_on ?? 'null',
+                    'sort_direction' => $sort_direction ?? 'null',
+                    'request' => $request->all(),
+                ],
+            ]);
         } else {
             return view('accounts.index', compact('accounts'));
         }
