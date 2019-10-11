@@ -69,7 +69,7 @@
         "refresh-db": [
             "touch database/database.sqlite",
             "@php artisan migrate:fresh --env=testing",
-            "@php artisan db:seed"
+            "@php artisan db:seed --env=testing"
         ],
         "my-clear-cache": "@php artisan cache:clear",
         "test": "phpunit --testdox; echo"

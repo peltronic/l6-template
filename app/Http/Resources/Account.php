@@ -16,7 +16,7 @@ class Account extends JsonResource
         //return parent::toArray($request);
         return [
             'id' => $this->id,
-            'aname' => $this->aname,
+            'aname' => $this->aname, // %TODO: renderField(), or does this belong in view layer?
             'adesc' => $this->adesc,
             'listings' => [],
         ];

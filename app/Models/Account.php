@@ -29,6 +29,18 @@ class Account extends BaseModel implements Selectable, Sluggable, Guidable
     }
 
     //--------------------------------------------
+    // Local Scopes
+    //--------------------------------------------
+
+    public function scopeFilterBy($query, $filters)
+    {
+        if ( array_key_exists('aname', $filters) ) {
+            $query->where('aname', 'like', '%'.$filters['aname'].'%');
+        }
+        return $query;
+    }
+
+    //--------------------------------------------
     // Methods
     //--------------------------------------------
 

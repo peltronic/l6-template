@@ -19,7 +19,12 @@ class AccountsController extends Controller
 
     public function index(Request $request)
     {
-        $accounts = Account::paginate();
+        if ( $request->has('filters') ) {
+            $accounts = Account::filterBy($request->filters)->paginate();
+        } else {
+            $accounts = Account::paginate();
+        }
+
         if ( $request->ajax() ) {
             //return AccountResource::collection($accounts);
             return new AccountCollection($accounts);

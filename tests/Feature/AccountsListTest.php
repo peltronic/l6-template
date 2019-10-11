@@ -82,23 +82,34 @@ class AccountsListTest extends TestCase
         $this->assertResponseContainsAccounts($response, ...$accounts);
     }
 
+    // %TODO: impl filtering using Query Scopes
     public function testNameFilter()
     {
-        $account1 = factory(Account::class)->create(['aname' => 'PHP for begginers']);
+        $account1 = factory(Account::class)->create(['aname' => 'PHP for beginners']);
         $account2 = factory(Account::class)->create(['aname' => 'Javascript for dummies']);
         $account3 = factory(Account::class)->create(['aname' => 'Advanced Python']);
 
-        /*
-        $account1->aname = 'blah';
-        $account1->save();
-        $account2->aname = 'blah';
-        $account2->save();
-        //dd($account2);
-         */
-
-        $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>'nothere']]); // %FIXME: should fail
+        $querystr = 'for';
+        $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>$querystr]]); // %FIXME: should fail
         $response->assertStatus(200);
         $content = json_decode($response->content(),true);
+        //dd($content['data']);
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'aname',
+                    ],
+                ],
+        ]);
+
+        foreach ( $content['data'] as $i => $d ) {
+            $this->assertRegExp('/'.$querystr.'/', $d['aname']); // contains string
+        }
+
+        /*
+        $account1->aname = 'blah';
+        $account2->aname = 'blah';
+         */
 
         $a = $content['data'];
         $s = [$this->accountToResourceArray($account1)];
@@ -107,34 +118,6 @@ class AccountsListTest extends TestCase
         //$this->assertArraySubset( $s, $a );
         self::assertArraySubset( $s, $a );
 
-        //$this->assertResponseContainsAccounts($response, $account1);
-        /*
-        dd( array_map(function (Account $a) {
-            return $this->accountToResourceArray($a);
-        }, [$account1]) );
-
-        array:1 [
-            0 => array:4 [
-                "id" => 1
-                "aname" => "blah"
-                "adesc" => "Totam molestiae unde sit qui qui."
-                "listings" => []
-            ]
-        ]
-         */
-        /*
-        $response->assertJson([
-            'data' => array_map(function (Account $a) {
-                return $this->accountToResourceArray($a);
-            }, [$account1]),
-        ]);
-         */
-
-        /*
-        $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>'northere']]); // %FIXME: should fail
-        $response->assertStatus(200);
-        $this->assertResponseContainsAccounts($response, $account1, $account2);
-         */
     }
 
     // ---------------------------------------------
