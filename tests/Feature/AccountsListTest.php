@@ -118,6 +118,29 @@ class AccountsListTest extends TestCase
 
     }
 
+    public function testSearch()
+    {
+        $account1 = factory(Account::class)->create(['aname' => 'PHP for beginners']);
+        $account2 = factory(Account::class)->create(['aname' => 'Javascript for dummies']);
+        $account3 = factory(Account::class)->create(['aname' => 'Advanced Python']);
+        list($guid2) = explode('-',$account2->guid);
+
+        $searches = [
+            'guid' => $guid2, 
+            'aname' => 'PHP',
+            'slug' => 'for',
+        ];
+
+        foreach ( $searches as $field => $searchstr ) {
+            $response = $this->ajaxJSON('GET','/api/accounts',['search'=>$searchstr]);
+            $response->assertStatus(200);
+            $content = json_decode($response->content(),true); //dd($content);
+            foreach ( $content['data'] as $i => $d ) {
+                $this->assertRegExp('/'.$searchstr.'/', $d[$field]); // test that each result contains query string
+            }
+        }
+    }
+
     public function testAnameSort()
     {
         $account1 = factory(Account::class)->create(['aname' => 'PHP for begginers']);

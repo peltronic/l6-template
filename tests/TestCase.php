@@ -19,6 +19,8 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             'id' => $obj->id,
+            'slug' => $obj->slug,
+            'guid' => $obj->guid,
             'aname' => $obj->aname,
             'adesc' => $obj->adesc,
             'listings' => [],

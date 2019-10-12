@@ -22,7 +22,7 @@ class AccountsController extends Controller
         // query
         $query = Account::query();
 
-        // apply filters %TODO: move to lib/model?
+        // apply filters %TODO: move to lib/model? %DONE with local scopes
         if ( $request->has('filters') ) {
             $query->filterBy($request->filters);
         }
@@ -34,6 +34,22 @@ class AccountsController extends Controller
                 ? ($request->is_sort_asc ? 'asc' : 'desc')
                 : 'asc'; // default is asc
             $query->orderBy($sort_on, $sort_direction);
+        }
+
+        // apply search %TODO: move to lib/model?
+        if ( $request->has('search') && is_array($request->search) ) {
+            $str = array_key_exists('value', $request->search) ? $request->search['value'] : null;
+        } else if ( $request->has('search') && is_string($request->search) ) {
+            $str = $request->search;
+        } else {
+            $str = null;
+        }
+        if ( !empty($str) && is_string($str) ) {
+            $query->where( function ($q) use($str) {
+                $q->where('slug', 'like', '%'.$str.'%');
+                $q->orWhere('guid', 'like', $str.'%');
+                $q->orWhere('aname', 'like', $str.'%');
+            });
         }
 
         $accounts = $query->paginate();
