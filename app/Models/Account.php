@@ -1,8 +1,13 @@
 <?php
 namespace App\Models;
 
-class Account extends BaseModel implements Selectable, Sluggable, Guidable
+use Illuminate\Database\Eloquent\Builder;
+
+class Account extends BaseModel implements Selectable, Sluggable, Guidable, Filterable, Orderable, Searchable
 {
+
+    use OrderableTrait; // default implemenation for Filterable
+
     protected $fillable = [' guid', 'slug', 'user_id', 'aname', 'adesc', 'jsonattrs'];
 
     // Default Validation Rules: may be overridden in controller...but NOTE these are used in renderFormLabel() and isFieldRequired() !
@@ -32,28 +37,18 @@ class Account extends BaseModel implements Selectable, Sluggable, Guidable
     // Local Scopes
     //--------------------------------------------
 
-    // %TODO: trait + interface Filterable
-    public function scopeFiltered($query, array $filters=[])
+    // Implementes Filterable
+    public function scopeFiltered(Builder $query, array $filters=[]) : Builder
     {
         if ( array_key_exists('aname', $filters) ) {
             $query->where('aname', 'like', '%'.$filters['aname'].'%');
         }
+        //dd( get_class($query));
         return $query;
     }
 
-    // %TODO: trait + interface Sortable
-    public function scopeOrdered($query, array $sorter=[])
-    {
-        $sort_on = $sorter['sort_on'];
-        $sort_direction = array_key_exists('is_sort_asc', $sorter)
-            ? ($sorter['is_sort_asc'] ? 'asc' : 'desc')
-            : 'asc'; // default is asc
-        $query->orderBy($sort_on, $sort_direction);
-        return $query;
-    }
-
-    // $searcher can be array or string
-    public function scopeSearched($query, $searcher=null)
+    // Implementes Searchable
+    public function scopeSearched(Builder $query, $searcher=null) : Builder
     {
         if ( is_array($searcher) ) {
             $str = array_key_exists('value', $searcher) ? $searcher['value'] : null;
