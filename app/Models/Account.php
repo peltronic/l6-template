@@ -52,6 +52,26 @@ class Account extends BaseModel implements Selectable, Sluggable, Guidable
         return $query;
     }
 
+    // $searcher can be array or string
+    public function scopeSearched($query, $searcher=null)
+    {
+        if ( is_array($searcher) ) {
+            $str = array_key_exists('value', $searcher) ? $searcher['value'] : null;
+        } else if ( is_string($searcher) ) {
+            $str = $searcher;
+        } else {
+            $str = null;
+        }
+        if ( !empty($str) && is_string($str) ) {
+            $query->where( function ($q) use($str) {
+                $q->where('slug', 'like', '%'.$str.'%');
+                $q->orWhere('guid', 'like', $str.'%');
+                $q->orWhere('aname', 'like', $str.'%');
+            });
+        }
+        return $query;
+    }
+
     //--------------------------------------------
     // Methods
     //--------------------------------------------
