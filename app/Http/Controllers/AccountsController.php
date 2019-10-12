@@ -19,12 +19,15 @@ class AccountsController extends Controller
 
     public function index(Request $request)
     {
+        // query
         $query = Account::query();
 
+        // apply filters %TODO: move to lib/model?
         if ( $request->has('filters') ) {
             $query->filterBy($request->filters);
         }
 
+        // apply sorting %TODO: move to lib/model?
         if ( $request->has('sort_on') ) {
             $sort_on = $request->sort_on;
             $sort_direction = $request->has('is_sort_asc') 
@@ -35,9 +38,6 @@ class AccountsController extends Controller
 
         $accounts = $query->paginate();
         //$accounts = $query->get();
-
-
-//$accounts = Account::filterBy($request->filters)->paginate();
 
         if ( $request->ajax() ) {
             //return AccountResource::collection($accounts);

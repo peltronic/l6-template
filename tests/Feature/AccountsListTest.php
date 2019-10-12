@@ -145,6 +145,23 @@ class AccountsListTest extends TestCase
         $this->assertResponseContainsAccounts($response, $account1, $account2, $account3);
     }
 
+    public function testPagination()
+    {
+        $accounts = factory(Account::class, 30)->create();
+        $firstPageAccounts = $accounts->forPage(1, 15);
+        $secondPageAccounts = $accounts->forPage(2, 15);
+
+        $response = $this->ajaxJSON('GET','/api/accounts?page=1');
+        $response->assertStatus(200);
+
+        $this->assertResponseContainsAccounts($response, ...$firstPageAccounts);
+
+        $response = $this->ajaxJSON('GET','/api/accounts?page=2');
+        $response->assertStatus(200);
+
+        $this->assertResponseContainsAccounts($response, ...$secondPageAccounts);
+    }
+
     // ---------------------------------------------
 
 
