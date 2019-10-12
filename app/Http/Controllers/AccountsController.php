@@ -24,16 +24,11 @@ class AccountsController extends Controller
 
         // apply filters %TODO: move to lib/model? %DONE with local scopes
         if ( $request->has('filters') ) {
-            $query->filterBy($request->filters);
+            $query->filtered($request->filters);
         }
 
-        // apply sorting %TODO: move to lib/model?
-        if ( $request->has('sort_on') ) {
-            $sort_on = $request->sort_on;
-            $sort_direction = $request->has('is_sort_asc') 
-                ? ($request->is_sort_asc ? 'asc' : 'desc')
-                : 'asc'; // default is asc
-            $query->orderBy($sort_on, $sort_direction);
+        if ($request->has(['sort_on'])) {
+            $query->ordered( $request->only(['sort_on','is_sort_asc']) );
         }
 
         // apply search %TODO: move to lib/model?

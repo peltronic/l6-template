@@ -32,11 +32,23 @@ class Account extends BaseModel implements Selectable, Sluggable, Guidable
     // Local Scopes
     //--------------------------------------------
 
-    public function scopeFilterBy($query, $filters)
+    // %TODO: trait + interface Filterable
+    public function scopeFiltered($query, array $filters=[])
     {
         if ( array_key_exists('aname', $filters) ) {
             $query->where('aname', 'like', '%'.$filters['aname'].'%');
         }
+        return $query;
+    }
+
+    // %TODO: trait + interface Sortable
+    public function scopeOrdered($query, array $sorter=[])
+    {
+        $sort_on = $sorter['sort_on'];
+        $sort_direction = array_key_exists('is_sort_asc', $sorter)
+            ? ($sorter['is_sort_asc'] ? 'asc' : 'desc')
+            : 'asc'; // default is asc
+        $query->orderBy($sort_on, $sort_direction);
         return $query;
     }
 
