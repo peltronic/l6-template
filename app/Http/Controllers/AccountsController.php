@@ -19,37 +19,18 @@ class AccountsController extends Controller
 
     public function index(Request $request)
     {
-        // query
         $query = Account::query();
 
-        // apply filters %TODO: move to lib/model? %DONE with local scopes
         if ( $request->has('filters') ) {
-            $query->filterBy($request->filters);
+            $query->filtered( $request->filters );
         }
 
-        // apply sorting %TODO: move to lib/model?
-        if ( $request->has('sort_on') ) {
-            $sort_on = $request->sort_on;
-            $sort_direction = $request->has('is_sort_asc') 
-                ? ($request->is_sort_asc ? 'asc' : 'desc')
-                : 'asc'; // default is asc
-            $query->orderBy($sort_on, $sort_direction);
+        if ($request->has(['sort_on'])) {
+            $query->ordered( $request->only(['sort_on','is_sort_asc']) );
         }
 
-        // apply search %TODO: move to lib/model?
-        if ( $request->has('search') && is_array($request->search) ) {
-            $str = array_key_exists('value', $request->search) ? $request->search['value'] : null;
-        } else if ( $request->has('search') && is_string($request->search) ) {
-            $str = $request->search;
-        } else {
-            $str = null;
-        }
-        if ( !empty($str) && is_string($str) ) {
-            $query->where( function ($q) use($str) {
-                $q->where('slug', 'like', '%'.$str.'%');
-                $q->orWhere('guid', 'like', $str.'%');
-                $q->orWhere('aname', 'like', $str.'%');
-            });
+        if ($request->has(['search'])) {
+            $query->searched( $request->search );
         }
 
         $accounts = $query->paginate();
