@@ -87,34 +87,23 @@ class AccountsListTest extends TestCase
         $account1 = factory(Account::class)->create(['aname' => 'PHP for beginners']);
         $account2 = factory(Account::class)->create(['aname' => 'Javascript for dummies']);
         $account3 = factory(Account::class)->create(['aname' => 'Advanced Python']);
-        $querystr = 'for';
 
-        $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>$querystr]]);
-        $response->assertStatus(200);
+        $searches = [ 'PHP', 'for', 'nothing' ];
 
-        $content = json_decode($response->content(),true); //dd($content['data']);
-
-        $response->assertJsonStructure([
-            'data' => [
-                '*' => [
-                    'aname',
-                    ],
-                ],
-        ]);
-
-        foreach ( $content['data'] as $i => $d ) {
-            $this->assertRegExp('/'.$querystr.'/', $d['aname']); // test that each result contains query string
+        foreach ( $searches as $querystr ) {
+            $response = $this->ajaxJSON('GET','/api/accounts',['filters'=>['aname'=>$querystr]]);
+            $response->assertStatus(200);
+            $content = json_decode($response->content(),true); //dd($content['data']);
+            foreach ( $content['data'] as $i => $d ) {
+                $this->assertRegExp('/'.$querystr.'/', $d['aname']); // test that each result contains query string
+            }
         }
 
-        // force fail
-        if (0) {
-            $account1->aname = 'blah';
-            $account2->aname = 'blah';
-        }
-
+        /*
         $a = $content['data'];
         $s = [$this->accountToResourceArray($account1)];
         self::assertArraySubset( $s, $a ); //dd( $a, $s );
+         */
 
     }
 
@@ -126,9 +115,30 @@ class AccountsListTest extends TestCase
         list($guid2) = explode('-',$account2->guid);
 
         $searches = [
-            'guid' => $guid2, 
+            'guid' => $guid2,  // %TODO: make these arrays, to test case for no matches, etc
             'aname' => 'PHP',
             'slug' => 'for',
+        ];
+
+        foreach ( $searches as $field => $searchstr ) {
+            $response = $this->ajaxJSON('GET','/api/accounts',['search'=>$searchstr]);
+            $response->assertStatus(200);
+            $content = json_decode($response->content(),true); //dd($content);
+            foreach ( $content['data'] as $i => $d ) {
+                $this->assertRegExp('/'.$searchstr.'/', $d[$field]); // test that each result contains query string
+            }
+        }
+    }
+
+    public function testSearchNotFound()
+    {
+        $account1 = factory(Account::class)->create(['aname' => 'PHP for beginners']);
+        $account2 = factory(Account::class)->create(['aname' => 'Javascript for dummies']);
+        $account3 = factory(Account::class)->create(['aname' => 'Advanced Python']);
+        list($guid2) = explode('-',$account2->guid);
+
+        $searches = [
+            'guid' => 'nothing',
         ];
 
         foreach ( $searches as $field => $searchstr ) {
