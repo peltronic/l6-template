@@ -80,7 +80,7 @@ class Account extends BaseModel implements Selectable, Sluggable, Guidable, Filt
 
     // %%% --- Implement Selectable Interface ---
 
-    public static function getSelectOptions($includeBlank=true, $keyField='id', $filters=[]) : array
+    public static function getSelectOptions(bool $includeBlank=true, string $keyField='id', array $filters=[]) : array
     {
         $records = self::all();
         $options = [];
