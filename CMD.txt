@@ -2,6 +2,9 @@ $ php artisan key:generate
 
 $ php artisan migrate:fresh --env=testing
 
+$ tar cvzf genesis-patch--utils_and_model_interfaces.tgz  app/Libs/Utils app/Models/*able.php app/Models/*Trait.php app/Models/BaseModel.php
+$ tar cvzf genesis-patch--accounts_resource.tgz   app/Models/Account.php app/Http/Controllers/AccountsController.php resources/views/accounts app/Models/Listing.php app/Http/Controllers/ListingsController.php resources/views/listings database/seeds/AccountsTableSeeder.php database/seeds/ListingsTableSeeder.php database/factories/AccountFactory.php database/factories/ListingFactory.php
+$ tar cvzf genesis-patch--accounts_resource.tgz   app/Models/Account.php app/Http/Controllers/AccountsController.php resources/views/accounts app/Models/Listing.php app/Http/Controllers/ListingsController.php resources/views/listings database/seeds/AccountsTableSeeder.php database/seeds/ListingsTableSeeder.php database/factories/AccountFactory.php database/factories/ListingFactory.php database/migrations/2019_10_06_034827_create_listings_table.php
 
 $ php artisan session:table
 $ php artisan migrate
@@ -11,7 +14,7 @@ $ git commit -m "INIT"
 
 
 
-php artisan make:scaffold Account --schema=" \
+php artisan make:scaffold Account --schema="\
 guid:string:unique,\
 slug:string:unique,\
 user_id:integer:unsigned:nullable,\
@@ -19,7 +22,7 @@ aname:string:nullable,\
 adesc:longtext:nullable,\
 jsonattrs:longtext:nullable"
 
-php artisan make:scaffold Listing --schema=" \
+php artisan make:scaffold Listing --schema="\
 guid:string:unique,\
 slug:string:unique,\
 account_id:integer:unsigned:nullable,\
